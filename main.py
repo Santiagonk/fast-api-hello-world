@@ -3,7 +3,7 @@ from typing import Optional
 from enum import Enum
 
 #Pydantic
-from pydantic import BaseModel
+from pydantic import BaseModel, ColorError, EmailStr, HttpUrl, PaymentCardNumber
 from pydantic import Field
 
 # FastAPI
@@ -22,9 +22,21 @@ class HairColor(Enum):
     red = "red"
 
 class Location(BaseModel):
-    city: str
-    state: str
-    country: str
+    city: str = Field(
+        ..., 
+        min_length=1,
+        max_length=50
+        )
+    state: str = Field(
+        ..., 
+        min_length=1,
+        max_length=50
+        )
+    country: str = Field(
+        ..., 
+        min_length=1,
+        max_length=50
+        )
 
 class Person(BaseModel):
     first_name: str = Field(
@@ -44,7 +56,9 @@ class Person(BaseModel):
         )
     hair_color: Optional[HairColor] = Field(default=None)
     is_married: Optional[bool] = Field(default=None)
-    
+    email: EmailStr
+    website: HttpUrl
+    card_number: PaymentCardNumber
 
 @app.get("/")
 def home():
