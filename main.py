@@ -3,12 +3,14 @@ from typing import Optional
 from enum import Enum
 
 #Pydantic
-from pydantic import BaseModel, ColorError, EmailStr, HttpUrl, PaymentCardNumber
+from pydantic import BaseModel
 from pydantic import Field
+from pydantic import EmailStr
 
 # FastAPI
 from fastapi import FastAPI
 from fastapi import status
+from fastapi import HTTPException
 from fastapi import Body, Query, Path, Form, Header, Cookie, UploadFile, File
 
 app = FastAPI()
@@ -80,6 +82,8 @@ class LoginOut(BaseModel):
         )
     message: str = Field(default="Login Succesfully!")
 
+# Endpoints
+
 @app.get(
     path="/", 
     status_code=status.HTTP_200_OK
@@ -122,6 +126,8 @@ def show_person(
 
 # Validaciones: Path Parameters
 
+persons = [1, 2, 3, 4, 5]
+
 @app.get(
     path="/person/detail/{person_id}",
     status_code=status.HTTP_200_OK
@@ -134,6 +140,11 @@ def show_person(
         description="This is the person id, It's requiered"
         )
     ):
+    if person_id not in persons:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="¡This person doesn't exist!"
+        )
     return {person_id: "It exists!"}
 
 # Validaciones: Request Body
