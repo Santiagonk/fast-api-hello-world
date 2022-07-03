@@ -1,4 +1,5 @@
 #Python
+from email import message
 import imp
 from typing import Optional
 from enum import Enum
@@ -10,7 +11,7 @@ from pydantic import Field
 # FastAPI
 from fastapi import FastAPI
 from fastapi import status
-from fastapi import Body, Query, Path
+from fastapi import Body, Query, Path, Form
 
 app = FastAPI()
 
@@ -71,6 +72,15 @@ class Person(PersonBase):
 
 class PersonOut(PersonBase):
     pass
+
+class LoginOut(BaseModel):
+    username: str = Field(
+        ..., 
+        min_length=1,
+        max_length=50,
+        example="Africa"
+        )
+    message: str = Field(default="Login Succesfully!")
 
 @app.get(
     path="/", 
@@ -148,3 +158,11 @@ def update_person(
     result = person.dict()
     # result.update(location.dict())
     return result
+
+@app.post(
+    path="/login",
+    response_model=LoginOut,
+    status_code=status.HTTP_200_OK
+)
+def login(username: str = Form(...), password: str = Form(...)):
+    return LoginOut(username=username)
