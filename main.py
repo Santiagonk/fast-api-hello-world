@@ -89,6 +89,13 @@ class LoginOut(BaseModel):
     status_code=status.HTTP_200_OK
     )
 def home():
+    """
+    Home page of the API
+
+    This path returns the home page of the API.
+
+    No parameters are required.
+    """
     return {"Hello": "World"}
 
 # Request and Response Body
@@ -136,6 +143,18 @@ def show_person(
         example=28
         )
     ):
+    """
+    Show Person
+
+    This path operation shows the person's name and age in the app from the database.
+
+    Parameters:
+    - Query parameter:
+        - **name: str** -> This is the person name. It's between 1 and 50 characters.
+        - **age: int** -> This is the person age. It's required.
+
+    Returns a JSON with the person's name and age.
+    """
     return {name: age}
 
 # Validaciones: Path Parameters
@@ -155,6 +174,17 @@ def show_person(
         description="This is the person id, It's requiered"
         )
     ):
+    """
+    Show Person
+
+    This path operation shows the person's ID in the app from the database.
+
+    Parameters:
+    - Path parameter:
+        - **person_id: int** -> This is the person ID. It's required and must be greater than 0.
+
+    Returns a JSON with the person's ID.
+    """
     if person_id not in persons:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -180,6 +210,20 @@ def update_person(
     person: Person = Body(...),
     # location: Location = Body(...)  
     ):
+    """
+    Update Person
+
+    This path operation updates the person's information from the database.
+
+    Parameters:
+    - Path parameter:
+        - **person_id: int** -> This is the person ID. It's required and must be greater than 0.
+    - Request body parameter:
+        - **person: Person** -> A person model with first name, last name, age, hair color, is married, email, payment card number, favorite color and password.
+        - **location: Location** -> A location model with city, state and country.
+
+    Returns a JSON with the person's ID, its model and location.
+    """
     result = person.dict()
     # result.update(location.dict())
     return result
@@ -192,6 +236,18 @@ def update_person(
     status_code=status.HTTP_200_OK
 )
 def login(username: str = Form(...), password: str = Form(...)):
+    """
+    User login
+
+    This path operation allows you to login in the app.
+
+    Parameters:
+    - Request body parameter:
+        - **username: str** -> This is the username to enter in the form. It's required.
+        - **password: str** -> This is the password to enter in the form. It's required.
+
+    Returns a JSON with the username and a message.
+    """
     return LoginOut(username=username)
 
 # Cookies and Headers Parameters
@@ -219,6 +275,21 @@ def contact(
     user_agent: Optional[str] = Header(default=None),
     ads: Optional[str] = Cookie(default=None)    
 ):
+    """
+    Contact
+
+    This path operation allows the user to contact the company.
+
+    Parameters:
+    - user_agent: The browser that the user is using.
+    - ads: The cookies that this website uses.
+    - Request body parameter:
+        - **first_name: str** -> This is the first name to enter in the form. It's required.
+        - **last_name: str** -> This is the last name to enter in the form. It's required.
+        - **email: EmailStr** -> This is the email to enter in the form. It's required.
+        - **message: str** -> This is the message to enter in the form. It's required.
+
+    """
     return user_agent
 
 # Files
@@ -229,6 +300,17 @@ def contact(
 def post_image(
     image: UploadFile = File(...)
 ):
+    """
+    Post image
+
+    This path operation allows you to post an image in the app to the database.
+
+    Parameters:
+    - Request body parameter:
+        - **image: UploadFile** -> This is the image to upload. It's required.
+
+    Returns a JSON with the image's name, format and size in kb.
+    """
     return {
         "Filename":image.filename,
         "Format": image.content_type,
